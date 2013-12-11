@@ -94,7 +94,7 @@ class Users(db.Model):
         return False
 
     def get_id(self):
-        return unicode(self.id)    
+        return unicode(self.id)
 
     def __repr__(self):
         return '<User: %s>' % (self.username)
@@ -109,23 +109,23 @@ application.url_map.converters['regex'] = RegexConverter
 
 # Forms
 class SignupForm(Form):
-    username = TextField(u'Nazwa użytkownika', 
+    username = TextField(u'Nazwa użytkownika',
         validators=[Required(u'Musisz wpisać nazwę użytkownika')])
     password = PasswordField(u'Hasło',
         validators=[Required(u'Musisz wpisać hasło'),
                     Length(min=6, message=(u'Hasło musi mieć co najmniej 6 znaków'))])
-    email = TextField(u'Email', 
-        validators=[Required(u'Wpisz adres email'), 
+    email = TextField(u'Email',
+        validators=[Required(u'Wpisz adres email'),
                     Length(min=6, message=(u'Adres email zbyt krótki')),
-                    Email(message=(u'Błędny adres email'))])        
+                    Email(message=(u'Błędny adres email'))])
     agree = BooleanField(u'Akceptuję warunki <a href="#">korzystania z serwisu</a>',
         validators=[Required(u'Musisz zaakceptować warunki korzystania z serwisu')])
 
 class SigninForm(Form):
-    username = TextField(u'Nazwa użytkownika', 
+    username = TextField(u'Nazwa użytkownika',
         validators=[Required(),
             Length(min=3, message=(u'Nazwa użytkownika musi mieć co najmniej 3 znaki')) ])
-    password = PasswordField(u'Hasło', 
+    password = PasswordField(u'Hasło',
         validators=[Required(),
             Length(min=6, message=(u'Proszę podaj dłuższe hasło')) ])
     remember_me = BooleanField(u'Zapamiętaj mnie', default=False)
@@ -138,15 +138,15 @@ class PortfolioForm(Form):
     tags = TextField(u'Tagi')
 
 @application.route('/')
-def index():     
-    return render_template('themes/water/index.html', 
+def index():
+    return render_template('themes/water/index.html',
         page_title=u'Udostępnij swoje CV pracodawcy - Twoje-CV.pl',
-        signin_form = SigninForm() )    
+        signin_form = SigninForm() )
 
 
 @application.route('/profil/', methods=['GET', 'POST'])
 @application.route('/profil/<username>/', methods=['GET', 'POST'])
-def profile(username = None):      
+def profile(username = None):
     #print 'req ', request
     if request.method == 'POST':
         print 'req ', dir(request.form)
@@ -180,33 +180,33 @@ def profile(username = None):
 
 @application.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':               
-        if current_user is not None and current_user.is_authenticated():                                    
+    if request.method == 'POST':
+        if current_user is not None and current_user.is_authenticated():
             return redirect(url_for('profil', username=current_user))
 
-        form = SigninForm(request.form)        
-        if form.validate_on_submit():            
+        form = SigninForm(request.form)
+        if form.validate_on_submit():
             user = Users.query.filter_by(username = form.username.data).first()
             if user is None:
                 form.username.errors.append(u'Użytkownik nie istnieje')
                 return render_template('themes/water/login.html',
                                         signin_form = form)
 
-            if user.password != form.password.data:                
+            if user.password != form.password.data:
                 form.password.errors.append(u'Błędny hasło')
                 return render_template('themes/water/signin.html',
                                         signin_form = form)
 
-            login_user(user, remember = form.remember_me.data)            
-            session['signed'] = True            
-            session['username'] = user.username            
+            login_user(user, remember = form.remember_me.data)
+            session['signed'] = True
+            session['username'] = user.username
 
             if session.get('next'):
                 next_page = session.get('next')
                 session.pop('next')
                 return redirect(next_page)
             else:
-                return redirect(url_for('profile', username=session['username']))        
+                return redirect(url_for('profile', username=session['username']))
         return render_template('themes/water/login.html',
                                     signin_form = form)
     else:
@@ -223,7 +223,7 @@ def logout():
     return redirect(url_for('index'))
 
 @application.route('/rejestracja/', methods=['GET', 'POST'])
-def signup():    
+def signup():
     if request.method == 'POST':
         form = SignupForm(request.form)
         if form.validate():
@@ -278,7 +278,7 @@ def portfolio_delete(id):
     db.session.commit()
     result = {}
     result['result'] = 'success'
-    return json.dumps(result) 
+    return json.dumps(result)
 
 def dbinit():
     db.drop_all()
@@ -288,14 +288,13 @@ def dbinit():
         bio='I love python very much', avatar='../../static/img/face.jpg')
     user1.portfolio.append(Portfolio(title='tazoCMS', description='CMS in django', tags='jQuery, Django, PostgreSQL, Bootstrap, Ajax'))
     user1.portfolio.append(Portfolio(title='Certifacate portal', description='Certificate web system in Django', tags='Django, jQuery'))
-    db.session.add(user1)    
+    db.session.add(user1)
 
     user = Users(username='diesel', firstname='Diesel', lastname='Piotr',
-        password='pchela', email="dieselo@o2.pl")    
+        password='pchela', email="dieselo@o2.pl")
     user.portfolio.append(Portfolio(title='FikrPOS', description='An integrated POS solution'))
     db.session.commit()
 
 if __name__ == '__main__':
     dbinit();
     application.run(debug=True, host="0.0.0.0", port=8000)
-
