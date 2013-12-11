@@ -1,0 +1,121 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">    
+
+    <title>{% block title %}{{ page_title }}{% endblock %}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../static/css/bootstrap.css" rel="stylesheet">
+    <link href="../../static/css/style.css" rel="stylesheet">
+    <link href="../../static/css/bootstrap-tagsinput.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    {% block css %}
+    <link href="../../static/css/jumbotron-narrow.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/bootswatch/2.3.2/cerulean/bootstrap.min.css" rel="stylesheet">
+    {% endblock %}
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>    
+
+    <div class="container">     
+    {% block nav %} 
+    <div class="header">
+      <ul class="nav nav-pills pull-right">
+        <li class="active"><a href="{{ url_for('index') }}">Twoje CV</a></li>
+        {% if session['signed'] %}          
+          <li><a href="{{ url_for('profile', username=session['username']) }}">Profil</a></li>
+          <li><a href="{{ url_for('logout') }}">Wyloguj</a></li>
+        {% else %}
+          <li><a href="{{ url_for('login') }}">Zaloguj się</a></li>
+          <li><a href="{{ url_for('signup') }}">Rejestracja</a></li>          
+        {% endif %}        
+      </ul>
+      <h3 class="text-muted">Twoje CV</h3>
+    </div>               
+    {% endblock %}
+
+    {% block content %}    
+    {% endblock %}
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->    
+    <script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="../../static/js/bootstrap.min.js"></script>
+    <script src="../../static/js/modal.js"></script>
+    <script src="../../static/js/bootstrap-tagsinput.js"></script>    
+    <script src="../../static/js/bootbox.min.js"></script>
+    <script>         
+      bootbox.setDefaults({  
+        locale: "pl",
+        animate: false,
+      });
+
+      $(".btn-porto-add").click(function() {        
+        $(".modal-title").html("Nowy projekt");
+        $("#title").val("");
+        $("#description").val("");
+        $("#tags").tagsinput("removeAll");
+      });      
+
+      // Delete portfolio
+      $('.delete').click(function() {
+        var id = $(this).parent().parent().attr("data-porto-id");
+
+        bootbox.confirm("<h4>Usuwanie projektu</h4><br>Jesteś pewien, że chcesz usunąć ten projekt?", function(result) {
+          if (result) {                    
+            $.getJSON(
+              "/portfolio_delete/" + id,
+              {}
+            ).done(function(data) {
+              location.reload();
+            }).fail(function(data, textstatus, xhr) {
+              alert("Can't remove " + data + " - " + textstatus);
+            });
+          }
+        });
+      });
+
+      // Edit portfolio
+      $('.edit').click(function() {        
+        var id = $(this).parent().parent().attr("data-porto-id");
+        
+        $(".modal-title").html("&nbsp;");
+        $("#title").val("");
+        $("#description").val("");
+        $("#tags").tagsinput("removeAll");
+
+        $.getJSON(
+            "/portfolio_get/" + id,
+            {}
+          ).done(function(data) {            
+            $(".modal-title").html(data.title);
+            $("#title").val(data.title);
+            $("#description").val(data.description);
+            $("#tags").tagsinput("add", data.tags);            
+
+          }).fail(function(data,textstatus,xhr) {
+
+          });
+      });            
+    </script>
+
+  </body>
+</html>

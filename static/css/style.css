@@ -1,0 +1,17 @@
+.porto-title {
+    padding-right: 5px;
+}
+
+.edit, .delete {
+    padding-left: 2px;    
+}
+
+input[type="text"].form-control,
+input[type="password"].form-control {
+    margin: 0;
+    height: 28px !important;
+}
+
+input[type="text"].search {
+    height: 34px !important;
+}

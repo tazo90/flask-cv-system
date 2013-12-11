@@ -1,0 +1,56 @@
+{% extends "themes/water/base.html" %}
+
+{% block content %}
+{% if session['signed'] %}
+<div class="col-sm-10 col-sm-offset-1 well" style="background-color:#fff">
+    <div class="alert alert-success">
+        <p><strong>{{ session['username'] }}</strong> jesteś aktualnie zalogowany.
+        <br><br>W celu <strong>wylogowania</strong> kliknij przycisk poniżej.</p>
+    </div>
+    <p><a class="btn btn-lg btn-primary btn-success pull-right" href="{{ url_for('logout') }}">Wyloguj się</a></p>                        
+</div>
+{% else %}
+<div class="row">
+    <div class="col-sm-2">        
+    </div>
+
+    <div class="col-sm-8 well" style="background-color:#fff">
+        <div class="row">
+            <div class="col-sm-1">
+            </div>
+
+            <div class="col-sm-10">
+                <form action="#" class="form" method="POST">
+                    {{ signin_form.hidden_tag() }}
+                    <div class="heading">
+                        <h4>Logowanie</h4>
+                    </div>
+
+                    <div class="form-group {% if signin_form.username.errors %} has-error {% endif %}">
+                        {{ signin_form.username.label }}
+                        {{ signin_form.username(class="form-control") }}
+                        <p class="help-block">{{ signin_form.username.errors[0] }}</p>
+                    </div>
+
+                    <div class="form-group {% if signin_form.password.errors %} has-error {% endif %}">
+                        {{ signin_form.password.label }}
+                        {{ signin_form.password(class="form-control") }}
+                        <p class="help-block">{{ signin_form.password.errors[0] }}</p>
+                    </div>
+
+                    <div class="form-group {% if signin_form.password.errors %} has-error {% endif %}">
+                        <div class="checkbox">
+                            {{ signin_form.remember_me }}
+                            {{ signin_form.remember_me.label }}
+                        </div>
+                        <p class="help-block">{{ signin_form.remember_me.errors[0] }}</p>
+                    </div>
+
+                    <button class="btn btn-success pull-right">Zaloguj</button>                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

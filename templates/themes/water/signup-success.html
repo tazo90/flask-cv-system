@@ -1,0 +1,11 @@
+{% extends "themes/water/base.html" %}
+
+{% block content %}                         
+<div class="col-sm-10 col-sm-offset-1 well" style="background-color:#fff">
+    <div class="alert alert-success">
+        <strong>Gratulacje!</strong>
+        <p>Zarejestrowałeś się w serwisie Twoje-CV.pl.<br>Wybierz przycisk logowania znajdujący się poniżej, aby utworzyć swoje CV.</p>
+    </div>
+    <p><a class="btn btn-lg btn-primary btn-success pull-right" href="{{ url_for('login') }}">Zaloguj się</a></p>                        
+</div>
+{% endblock %}

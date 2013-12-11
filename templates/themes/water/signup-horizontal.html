@@ -1,0 +1,66 @@
+{% extends "themes/water/base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-1">        
+    </div>
+
+    <div class="col-sm-10 well" style="background-color:#fff">        
+        <div class="row">
+            
+            <div class="col-sm-12">
+                <form action="/signup" class="form-horizontal" method="POST">
+                    <div style="display: none">
+                    <input id="csrf_token" name="csrf_token" type="hidden" value="1383635907.93##3ea432bba94e0eb0f769c169ced98e0a8196bdd7" />
+                    </div>
+                    <div class="heading">
+                    <h4 class="form-heading">Publish your biography to the world!</h4>
+                    </div>
+                    <div class="form-group ">
+                    <label class="col-sm-4" for="email">Email address</label>
+                    <div class="col-sm-3">
+                    <input class="form-control" id="email" name="email" type="text" value="elawibowo@gmail.com" /> 
+                    </div>
+                    <p class="col-sm-5 help-block">
+                     
+                    
+                    </div>
+                    <div class="form-group  has-error ">
+                    <label class="col-sm-4" for="password">Pick a secure password</label>
+                    <div class="col-sm-3">
+                    <input class="form-control" id="password" name="password" type="password" />
+                    </div>
+                    <p class="col-sm-5 help-block">
+                    This field is required.
+                    
+                    </div>
+                    <div class="form-group  has-error ">
+                    <label class="col-sm-4" for="username">Choose your username</label>
+                    <div class="col-sm-3">
+                    <input class="form-control" id="username" name="username" type="text" />
+                    </div>
+                    <p class="col-sm-5 help-block">
+                    This field is required.
+                    
+                    </div>
+                    <div class="form-group  has-error ">
+                    <label class="checkbox col-sm-7">
+                    <input id="agree" name="agree" type="checkbox" value="y" /> <label for="agree">I agree all your <a href="/static/tos.html">Terms of Services</a></label>
+                    </label>
+                    <p class="col-sm-5 help-block">
+                    You must accept our Terms of Service
+                    
+                    </div>
+                    <button class="btn btn-success" type="submit">Sign Up</button>
+                </form>
+            </div>
+
+            <div class="col-sm-1">
+            </div>
+        </div>        
+    </div>
+
+    <div class="col-sm-2">
+    </div>    
+</div>
+{% endblock %}

@@ -1,0 +1,201 @@
+{% extends "themes/water/base.html" %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block css %}
+<link href="../../static/css/starter-template.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">  
+<style>
+.caret {
+  margin-bottom: 2px;
+}
+.btn-porto-add {
+  padding: 6px;
+}
+.badge {  
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+a, a:active, a:focus, a:hover {
+  outline: none;
+  color: #000;
+  cursor: pointer;
+}
+</style>  
+{% endblock %}
+
+{% block nav %}
+<div class="navbar navbar-inverse navbar-fixed-top">
+<div class="container">
+  <div class="navbar-header">
+    <a class="navbar-brand" href="/"><span>Twoje CV</span></a>          
+  </div>
+
+  {% if session['signed'] %}     
+  <ul class="nav navbar-nav navbar-right">
+    <li class="dropdown">
+      <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ session['username']}} <b class="caret"></b>
+      </a>
+
+      <ul class="dropdown-menu">        
+        <li><a href="#">Ustawienia</a></li>
+        <li class="divider"></li>
+        <li><a href="{{ url_for('logout') }}">Wyloguj</a></li>
+      </ul>
+    </li>
+  </ul> 
+  {% else %}
+  <div class="collapse navbar-collapse">
+    <form action="{{ url_for('login') }}" class="navbar-form navbar-right" method="POST">
+      {{ signin_form.hidden_tag() }}
+      
+      <div class="form-group">
+        {{ signin_form.username(class="form-control", placeholder="Nazwa użytkownika") }}              
+      </div>
+
+      <div class="form-group">
+        {{ signin_form.password(class="form-control", placeholder="Hasło") }}            
+      </div>
+
+      <div class="checkbox">
+        {{ signin_form.remember_me }}
+        {{ signin_form.remember_me.label(style="color:rgb(240,240,240); ") }}
+      </div>
+
+      <div class="form-group">
+        <button class="btn btn-default" type="submit">Zaloguj</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+</div>
+</div>      
+{% endblock %}
+
+
+{% block content %}    
+<div class="page-header clearfix">
+  <div class="pull-left">
+    <h1>{{ user.firstname }} {{ user.lastname }}</h1>
+    <p>{{ user.tagline }}</p>
+  </div>
+
+  <div class="pull-right">    
+    <img src="{{ user.avatar }}" alt="#" class="img-thumbnail" style="margin-top:-25px;">          
+  </div>
+</div>
+<div class="row">      
+  <div class="col-sm-4">    
+    <address>
+      <strong>Dane</strong><br>
+      ul. Główna 39a<br>
+      Karchów, 47-270 Gościęcin<br>
+      <abbr title="Phone">Tel:</abbr> 886-918-467
+    </address>
+
+    <address>
+      <strong>Email</strong><br>
+      <a href="mailto:#">{{ user.email }}</a>
+    </address>                    
+
+    <p><strong>O mnie</strong></p>
+    <blockquote>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+    </blockquote>
+  </div><!-- /.col-sm-4 -->
+
+  <div class="col-sm-8">   
+    <div class="row">
+      <div class="col-sm-12">      
+        <form class="navbar-form navbar-right" style="padding:0;" role="search">
+            {% if session['signed'] %}
+            <button class="btn btn-default btn-sm btn-success btn-porto-add" data-toggle="modal" href="#portform_btnadd">Dodaj</button>
+            {% endif %}
+            <div class="form-group">
+                <input type="text" class="form-control search" placeholder="Szukaj">
+            </div>
+            <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+        </form>
+      </div>    
+
+      <br><br><br>
+
+      <ul class="list-group">  
+        {% if user.portfolio|length == 0 %}
+          <h4>Portfolio puste.</h4>
+        {% endif %}
+
+        {% for porto in user.portfolio %}
+          <li class="list-group-item">            
+            <div class="row" data-porto-id="{{ porto.id }}">
+              <div class="col-sm-3">
+                <strong class="porto-title">{{ porto.title }}</strong>
+                <a class="edit" href="#portform_btnadd" data-toggle="modal"><span class="glyphicon glyphicon-pencil"></span></a>
+                {#<a class="edit" href="#portform_btnadd" onclick="javascript:editPortform('{{ porto.id }}');" data-toggle="modal"><span class="glyphicon glyphicon-pencil"></span></a>#}
+                <a class="delete"><span class="glyphicon glyphicon-remove"></span></a>
+              </div>
+              <div class="col-sm-3">{{ porto.description }}</div>
+              <div class="col-sm-6">      
+              {% if porto.tags %}
+                {% for tag in porto.tags.split(',') %}
+                  <span class="badge">{{ tag }}</span>
+                {% endfor %}                          
+              {% endif %}
+              </div>
+            </div>            
+          </li>
+        {% endfor %}
+      </ul>     
+    </div><!-- /.row -->
+
+    <!-- Modal -->  
+    <div class="modal" id="portform_btnadd" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <center><h4 class="modal-title">Nowy projekt</h4></center>
+          </div>
+          <div class="modal-body">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-10">
+                  <form class="form-horizontal" action="{{ url_for('profile') }}" method="POST" id="portform">
+                    {{ portfolio_form.portfolio_id }}
+                    {{ portfolio_form.hidden_tag() }}
+                    
+                    <div class="form-group">                    
+                      {{ portfolio_form.title.label }}    
+                      {{ portfolio_form.title(class="form-control", placeholder="Podaj tytuł projektu")}}
+                      <p class="help-block" id="error_title">{{ portfolio_form.title.errors[0] }}
+                    </div>
+
+                    <div class="form-group">                    
+                      {{ portfolio_form.description.label }}    
+                      {{ portfolio_form.description(class="form-control", placeholder="Podaj krótki opis")}}
+                      <p class="help-block" id="error_title">{{ portfolio_form.description.errors[0] }}
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:-10px;">                    
+                      {{ portfolio_form.tags.label }}<br>
+                      {{ portfolio_form.tags(class="form-control", placeholder="Dodaj tag (separator ,)", **{'data-role':'tagsinput'}) }}                    
+                    </div>
+                  </form>
+                </div>
+                <div class="col-sm-1"></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+            <button type="submit" name="portfolio_form" class="btn btn-primary">Zapisz</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+  </div><!-- /.col-sm-8 -->
+</div>      
+{% endblock %}
