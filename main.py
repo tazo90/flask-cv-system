@@ -284,7 +284,7 @@ def dbinit():
     db.drop_all()
     db.create_all()
     user1 = Users(username='tazo', firstname='Mariusz', lastname='Winnik',\
-        password='pchela', email='tazo@o2.pl', tagline='Django/Python Programmer',\
+        password='test', email='tazo@o2.pl', tagline='Django/Python Programmer',\
         bio='I love python very much', avatar='../../static/img/face.jpg')
     user1.portfolio.append(Portfolio(title='tazoCMS', description='CMS in django', tags='jQuery, Django, PostgreSQL, Bootstrap, Ajax'))
     user1.portfolio.append(Portfolio(title='Certifacate portal', description='Certificate web system in Django', tags='Django, jQuery'))
