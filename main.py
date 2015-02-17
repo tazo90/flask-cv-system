@@ -291,7 +291,7 @@ def dbinit():
     db.session.add(user1)
 
     user = Users(username='diesel', firstname='Diesel', lastname='Piotr',
-        password='pchela', email="dieselo@o2.pl")
+        password='test', email="dieselo@o2.pl")
     user.portfolio.append(Portfolio(title='FikrPOS', description='An integrated POS solution'))
     db.session.commit()
 
